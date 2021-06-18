@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="projetWar" basedir="." default="checkstyle">
+
+	<property name="base.dir" value="../" />
+	<property name="baseTool.dir" value="../../outils/" />
+
+	<property name="src.dir" value="${base.dir}src" />
+	<property name="build.dir" value="${base.dir}webapp/WEB-INF/classes" />
+	<property name="doc" location="${base.dir}doc" />
+	<property name="lib" location="${base.dir}lib" />
+
+	<property name="reports" value="${baseTool.dir}/rapports" />
+	<property name="classpath" value="${build.dir}" />
+
+	<taskdef resource="checkstyletask.properties" classpath="${baseTool.dir}checkstyle-4.0-beta6/checkstyle-all-4.0-beta6.jar" />
+
+	<target name="reports" depends="checkstyle, classcycle, findbugs, jdepend">
+		<echo>Génération des rapports terminé.</echo>
+	</target>
+
+	<target name="jdepend">
+		<delete dir="${reports}/jdepend/" />
+		<mkdir dir="${reports}/jdepend/" />
+		<java classname="jdepend.xmlui.JDepend" fork="yes">
+			<classpath>
+				<fileset dir="${baseTool.dir}/jdepend/" includes="**/*.jar" />
+			</classpath>
+			<arg value="-file" />
+			<arg value="${reports}/jdepend/jdepend-report.xml" />
+			<arg value="${build.dir}" />
+		</java>
+
+		<style basedir="${reports}/jdepend/" destdir="${reports}/jdepend/" includes="jdepend-report.xml" style="${baseTool.dir}/jdepend/jdepend.xsl" />
+	</target>
+
+	<taskdef classpath="${baseTool.dir}findbugs-0.9.1/lib/findbugs-ant.jar" name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
+
+	<property name="findbugs.home" value="${baseTool.dir}findbugs-0.9.1/" />
+
+	<target name="findbugs">
+		<delete dir="${reports}/findbugs/" />
+		<mkdir dir="${reports}/findbugs/" />
+		<findbugs home="${findbugs.home}" output="html" outputFile="${reports}/findbugs/bcel-fb.html">
+			<classpath>
+			</classpath>
+			<sourcePath path="${src.dir}" />
+			<class location="${build.dir}" />
+		</findbugs>
+
+	</target>
+
+	<taskdef classpath="${baseTool.dir}/Classycle/classycle.jar" name="classycleReport" classname="classycle.ant.ReportTask" />
+
+	<target name="classcycle">
+		<delete dir="${reports}/classycle/" />
+		<mkdir dir="${reports}/classycle/" />
+		<classycleReport reportFile="${reports}/classycle/classycle.xml">
+			<fileset dir="${build.dir}">
+				<include name="**/*.class" />				
+			</fileset>
+		</classycleReport>
+
+		<style in="${reports}/classycle/classycle.xml" out="${reports}/classycle/classycle.html" style="${baseTool.dir}/Classycle/reportXMLtoHTML.xsl" />
+		<copydir dest="${reports}/classycle/images" src="${baseTool.dir}/Classycle/images">
+		</copydir>
+	</target>
+
+	<target name="init">
+		<!-- création d'un répertoire pour la compilation -->
+		<mkdir dir="${build.dir}" />
+	</target>
+
+	<target name="checkstyle" description="Generates a report of code convention violations.">
+		<delete dir="${reports}/checkstyle/" />
+		<mkdir dir="${reports}/checkstyle/" />
+		<checkstyle config="${baseTool.dir}/checkstyle-4.0-beta6/sun_checks.xml" failureProperty="checkstyle.failure" failOnViolation="false">
+			<classpath>
+				<!-- use the value of the ${classpath} property in the classpath -->
+				<pathelement path="${classpath}" />
+				<!-- include all jar files  -->
+				<fileset dir="${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="\var\www\jakarta-tomcat-4.0.6-LE-jdk14\common\lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+			<formatter type="xml" tofile="${reports}/checkstyle/checkstyle_report.xml" />
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+			</fileset>
+		</checkstyle>
+		<style in="${reports}/checkstyle/checkstyle_report.xml" out="${reports}/checkstyle/index.html" style="${baseTool.dir}/checkstyle-4.0-beta6/contrib/checkstyle-noframes-sorted.xsl" />
+	</target>
+
+	<target name="compil" depends="cleanTomcat">
+		<echo>Compilation des sources java</echo>
+		<!-- compilation des sources Java -->
+		<javac srcdir="${src.dir}" destdir="${build.dir}">
+			<classpath>
+				<!-- use the value of the ${classpath} property in the classpath -->
+				<pathelement path="${classpath}" />
+				<!-- include all jar files  -->
+				<fileset dir="${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="\var\www\jakarta-tomcat-4.0.6-LE-jdk14\common\lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="compilJUnit">
+		<echo>Compilation des sources Junit</echo>
+		<!-- compilation des sources Java -->
+		<javac srcdir="tests" destdir="tests">
+			<classpath path="c:/eclipse3.1-WTP/plugins/org.junit_3.8.1/">
+				<!-- use the value of the ${classpath} property in the classpath -->
+				<pathelement path="${classpath}" />
+				<!-- include all jar files  -->
+				<fileset dir="${lib}">
+					<include name="**/*.jar" />
+				</fileset>
+				<fileset dir="\var\www\jakarta-tomcat-4.0.6-LE-jdk14\common\lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="doc" depends="compil" description="Generation de la documentation">
+		<delete dir="${doc}/" />
+		<mkdir dir="${doc}/" />
+		<javadoc destdir="${doc}/" author="true" version="true" use="true" package="true">
+			<fileset dir="${src.dir}">
+				<include name="**/*.java" />
+				<exclude name="**/*Test*" />
+			</fileset>
+			<classpath>
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</javadoc>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+
+	<target name="all" depends="init ,compil, doc" description="Generation complete">
+		<echo message="Generation complete." />
+	</target>
+
+	<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${baseTool.dir}/pmd-bin-3.3/pmd-3.3/lib/pmd-3.3.jar" />
+
+	<target name="pmd">
+		<delete dir="${reports}/pmd/" />
+		<mkdir dir="${reports}/pmd/" />
+		<taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${baseTool.dir}/pmd-bin-3.3/pmd-3.3/lib/pmd-3.3.jar" />
+		<pmd rulesetfiles="rulesets/optimizations.xml">
+			<formatter type="xml" toFile="${reports}/pmd/report_pmd.xml"/>
+			<fileset dir="${src.dir}">
+					<include name="**/*.java" />				
+			</fileset>
+		</pmd>
+		<xslt in="${reports}/pmd/report_pmd.xml" style="${baseTool.dir}/pmd-bin-3.3/pmd-3.3/etc/xslt/pmd-report-per-class.xslt" out="${reports}/pmd/report_pmd.html" />
+	</target>
+
+</project>
