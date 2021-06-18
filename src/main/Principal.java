@@ -1,4 +1,7 @@
 package src.main;
+//Juego de damas
+
+
 import src.modelo.Tablero;
 public class Principal{
 
