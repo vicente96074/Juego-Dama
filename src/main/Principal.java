@@ -1,16 +1,11 @@
 package src.main;
 //Juego de damas
 
+public class Principal {
 
-import src.modelo.Tablero;
-public class Principal{
-
-	public static void main(String[] args){
-	
-		Principal principal = new Principal();	
+	public static void main(String[] args) {
+		Damas damas = new Damas();
+		damas.menu();
 	}
 	
-	public Principal(){
-		Tablero tablero = new Tablero();
-	}
 }

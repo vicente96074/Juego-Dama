@@ -30,7 +30,7 @@
 		<!-- Creamos el directorio dist/lib -->
 		<mkdir dir="${dist}/lib" />
 		<!-- Agregamos todo lo que hay en ${build} en ${nameDist}-${DSTAMP}.jar -->
-		<jar jarfile ="${dist}/lib/MyApp-${DSTAMP}.jar" basedir ="${build}" >
+		<jar jarfile ="${dist}/lib/Damas-${DSTAMP}.jar" basedir ="${build}" >
 			<manifest >
 				<attribute name="Main-Class" value ="src/main/Principal" />
 			</manifest >
