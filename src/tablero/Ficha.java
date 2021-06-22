@@ -14,8 +14,8 @@ public class Ficha {
 
     //private char celdaColor = '█';
     // █▓
-    public static final String ANSI_RED = "\u001B[31m";
-    public static final String ANSI_YELLOW = "\u001B[33m";
+    public static final String ANSI_RED = "\u001B[32m";
+    public static final String ANSI_YELLOW = "\u001B[34m";
 
     private String id;
 
@@ -47,22 +47,10 @@ public class Ficha {
     public Coordenada[] getMovimientosPosibles() {
         
         Coordenada[] res = new Coordenada[4];
-        
         int movY = (debeAscender) ? 1 : -1;
 
         int cont = this.evaluarMovimiento(-1, movY, this.posicion, res, 0);
         cont = this.evaluarMovimiento(+1, movY, this.posicion, res, cont);
-        
-
-
-        /*
-        System.out.println("Movimientos posibles - pos ini " + this.posicion.toString());
-        for (int i = 0; i < res.length; i++) {
-            if (res[i] != null) {
-                System.out.println(res[i].toString());
-            }
-        }
-*/
 
         if (cont == 0){
             res = null;
@@ -83,11 +71,13 @@ public class Ficha {
         Celda tmp = tablero.getCelda(evaluando);
 
         if (tmp != null) {
-            if (!tmp.ocupadaPorFicha()) {
+            if (!tmp.ocupadaPorFicha()) { //No está ocupada
                 res[indice] = evaluando;
+                fichaAComer[indice] = null;
                 indice++;
-            } else {
+            } else { //Esta ocupada
                 if (tmp.getFicha().getEsNegra() != this.esNegra) {
+                    fichaAComer[indice] = tmp.getFicha().getCoordenada();
                     Coordenada evaluando2 = new Coordenada(evaluando.getX() + movX, evaluando.getY() +movY);
                     tmp = tablero.getCelda(evaluando2);
                     if (!tmp.ocupadaPorFicha()) {
@@ -101,4 +91,9 @@ public class Ficha {
         return indice;
     }
 
+    public Coordenada[] getFichasAComer(){
+        return fichaAComer;
+    }
+
+    Coordenada[] fichaAComer = new Coordenada[4];
 }

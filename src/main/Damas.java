@@ -71,7 +71,7 @@ public class Damas {
                 }
             }
         } else {
-            IngresoDatos.imprimirMensaje("¡No hay 2 jugadores, por favor ingresalos!");
+            IngresoDatos.imprimirMensaje("¡No hay 2 jugadores, por favor ingresalos!\n");
         }
 
     }
@@ -98,11 +98,11 @@ public class Damas {
         boolean turnoBlanco = piedraPapelTijera.generarAleatoriamente();
 
         if (turnoBlanco) {
-            jugadorBlanco = tablaJugador.getJugadores()[idJ1-1];
-            jugadorNegro = tablaJugador.getJugadores()[idJ2-1];
+            jugadorBlanco = tablaJugador.getJugadores()[idJ1 - 1];
+            jugadorNegro = tablaJugador.getJugadores()[idJ2 - 1];
         } else {
-            jugadorBlanco = tablaJugador.getJugadores()[idJ2-1];
-            jugadorNegro = tablaJugador.getJugadores()[idJ1-1];
+            jugadorBlanco = tablaJugador.getJugadores()[idJ2 - 1];
+            jugadorNegro = tablaJugador.getJugadores()[idJ1 - 1];
         }
     }
 
@@ -110,21 +110,22 @@ public class Damas {
 
         Ficha fichaAMover = null;
         Coordenada[] coordenadasPosibles = null;
+        Coordenada[] coordenadasFichasAComer = null;
         String advertencia = "";
 
         while (fichaAMover == null) {
             System.out.println("\n\nJugador blanco: " + jugadorBlanco.getNombre() + "\t\t\t" + "Jugador negro: "
-                    + jugadorNegro.getNombre()+"\n");
+                    + jugadorNegro.getNombre() + "\n");
             tablero.pintarTablero();
             System.out.println(advertencia);
             advertencia = "";
             System.out.println("TURNO DE LAS " + ((esBlanca) ? "BLANCAS" : "NEGRAS"));
             fichaAMover = tablero.getFicha(Damas.readString("Seleccione la ficha que desea mover: "), esBlanca);
             if (fichaAMover == null) {
-                advertencia += "Debe seleccionar una ficha valida";
+                advertencia += "¡Debe seleccionar una ficha válida!";
             } else {
                 coordenadasPosibles = fichaAMover.getMovimientosPosibles();
-
+                coordenadasFichasAComer = fichaAMover.getFichasAComer();
                 if (coordenadasPosibles != null) {
                     String mensaje = "\nCoordenadas posibles para la ficha seleccionada: \n";
                     int cantidadPosibilidades = 0;
@@ -136,16 +137,22 @@ public class Damas {
                         }
                         i++;
                     }
+
+                    String mensaje1 = "\nCoordenadas posibles para la ficha a comer: \n";
+                    int j = 0;
+                    while (j < 4) {
+                        mensaje1 += j + ") " + coordenadasFichasAComer[j].toString() + "\n";
+                        j++;
+                    }
+
                     mensaje += "\nSeleccione la coordenada a la que desea moverse: ";
                     int seleccion = -1;
                     while ((seleccion < 0) || (seleccion >= cantidadPosibilidades)) {
                         seleccion = Damas.readInt(mensaje, true);
                     }
-
                     tablero.moverFicha(fichaAMover, coordenadasPosibles[seleccion]);
 
                 } else {
-
                     advertencia += "La ficha " + fichaAMover.getId() + " que selecciono no tiene movimientos posibles.";
                     fichaAMover = null;
                 }

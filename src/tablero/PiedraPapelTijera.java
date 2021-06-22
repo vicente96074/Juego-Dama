@@ -12,7 +12,7 @@ public class PiedraPapelTijera {
         boolean empate = false;
         int aleat1;
         int aleat2;
-        System.out.println("Su turno se generará aleatoriamente, con el juego Piedra Papel o Tijera");
+        System.out.println("Su turno se generará aleatoriamente, con el juego Piedra Papel o Tijera.");
         System.out.println("1. Tijera"
                           +"\n2. Papel"
                           +"\n2. Piedra");

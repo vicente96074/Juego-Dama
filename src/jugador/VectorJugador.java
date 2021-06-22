@@ -1,7 +1,6 @@
 package src.jugador;
 
 import src.main.IngresoDatos;
-import src.jugador.Jugador;
 
 public class VectorJugador {
 

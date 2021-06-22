@@ -37,19 +37,10 @@ public class Jugador{
 	public String getInformacion(){
 		return "Id: " + id+ " nombre: "+nombre + " juegos ganados: "+juegosGanados + " juegos perdidos: " +juegosPerdidos;
 	}
-
-	public void setTurno(String turno){
-		this.turno = turno;
-	}
-
-	public String getTurno(){
-		return turno; 
-	}
-
+	
 	//Variables con encapsulamiento
 	private String nombre;
 	private int juegosGanados;
 	private int juegosPerdidos;
 	private int id;
-	private String turno;
 }
